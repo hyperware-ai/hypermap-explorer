@@ -4,7 +4,7 @@ import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 
 import { fetchNodeInfo, mintFunction, noteFunction, factFunction } from '../helpers';
-import { KIMAP, mechAbi } from '../abis';
+import { HYPERMAP, mechAbi } from '../abis';
 
 interface InfoContainerProps {
     name: string;
@@ -106,7 +106,7 @@ const InfoContainer: React.FC<InfoContainerProps> = ({ name, refetchNode }) => {
             abi: mechAbi,
             functionName: 'execute',
             args: [
-                KIMAP,
+                HYPERMAP,
                 BigInt(0),
                 data,
                 0,
@@ -127,7 +127,7 @@ const InfoContainer: React.FC<InfoContainerProps> = ({ name, refetchNode }) => {
             abi: mechAbi,
             functionName: 'execute',
             args: [
-                KIMAP,
+                HYPERMAP,
                 BigInt(0),
                 data,
                 0,
@@ -143,8 +143,8 @@ const InfoContainer: React.FC<InfoContainerProps> = ({ name, refetchNode }) => {
         }
         if (!info) return;
         const data = mintFunction(
-            address, 
-            subname, 
+            address,
+            subname,
             implementation ? implementation as `0x${string}` : undefined
         );
         mint({
@@ -152,7 +152,7 @@ const InfoContainer: React.FC<InfoContainerProps> = ({ name, refetchNode }) => {
             abi: mechAbi,
             functionName: 'execute',
             args: [
-                KIMAP,
+                HYPERMAP,
                 BigInt(0),
                 data,
                 0,

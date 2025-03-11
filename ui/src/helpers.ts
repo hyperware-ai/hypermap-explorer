@@ -1,7 +1,7 @@
 import { encodeFunctionData, encodePacked, stringToHex } from "viem";
-import { kinomapAbi, KINO_ACCOUNT_IMPL, API_PATH } from "./abis";
+import { hypermapAbi, HYPER_ACCOUNT_IMPL, API_PATH } from "./abis";
 
-// GETs to kinode app
+// GETs to hyperware app
 
 export async function fetchNode(name: string) {
     const response = await fetch(API_PATH, {
@@ -27,21 +27,21 @@ export async function fetchNodeInfo(name: string) {
 // chain interaction encoding functions
 export function mintFunction(our_address: `0x${string}`, nodename: string, implementation?: `0x${string}`) {
     return encodeFunctionData({
-        abi: kinomapAbi,
+        abi: hypermapAbi,
         functionName: 'mint',
         args: [
             our_address,
             encodePacked(["bytes"], [stringToHex(nodename)]),
             "0x", // empty initial calldata
             "0x", // empty erc721 details
-            implementation ?? KINO_ACCOUNT_IMPL,
+            implementation ?? HYPER_ACCOUNT_IMPL,
         ]
     })
 }
 
 export function noteFunction(key: string, value: string) {
     return encodeFunctionData({
-        abi: kinomapAbi,
+        abi: hypermapAbi,
         functionName: 'note',
         args: [
             encodePacked(["bytes"], [stringToHex(key)]),
@@ -52,7 +52,7 @@ export function noteFunction(key: string, value: string) {
 
 export function factFunction(key: string, value: string) {
     return encodeFunctionData({
-        abi: kinomapAbi,
+        abi: hypermapAbi,
         functionName: 'fact',
         args: [
             encodePacked(["bytes"], [stringToHex(key)]),

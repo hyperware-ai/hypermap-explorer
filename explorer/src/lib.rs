@@ -1,14 +1,14 @@
 use alloy_sol_types::SolEvent;
-use kinode::process::kimap_explorer::{Name, Namehash, Request as ExplorerRequest};
-use kinode_app_framework::{app, eth, http, kimap, println, req, Message};
+use hyperware::process::hypermap_explorer::{Name, Namehash, Request as ExplorerRequest};
+use hyperware_app_framework::{app, eth, http, hypermap, println, req, Message};
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
 wit_bindgen::generate!({
     path: "target/wit",
-    world: "kimap-explorer-doria-dot-kino-v1",
+    world: "hypermap-explorer-nick-dot-hypr-v0",
     generate_unused_types: true,
-    additional_derives: [serde::Deserialize, serde::Serialize, kinode_app_framework::SerdeJsonInto],
+    additional_derives: [serde::Deserialize, serde::Serialize, hyperware_app_framework::SerdeJsonInto],
 });
 
 req!((Explorer, ExplorerRequest), (Eth, eth::EthSubResult));
@@ -54,27 +54,27 @@ struct Node {
 
 #[derive(Debug, Deserialize, Serialize)]
 struct State {
-    pub kimap: kimap::Kimap,
+    pub hypermap: hypermap::Hypermap,
     /// lookup table from name to namehash
     pub names: HashMap<Name, Namehash>,
     /// map from a namehash to its information
     pub index: BTreeMap<String, Node>,
 }
 
-impl kinode_app_framework::State for State {
-    /// generate a new state and subscribe to the kimap and catch up on logs from genesis
+impl hyperware_app_framework::State for State {
+    /// generate a new state and subscribe to the hypermap and catch up on logs from genesis
     fn new() -> Self {
-        let kimap = kimap::Kimap::default(60);
+        let hypermap = hypermap::Hypermap::default(60);
 
-        kimap
+        hypermap
             .provider
-            .subscribe_loop(1, Self::make_filter(&kimap), 0, 0);
+            .subscribe_loop(1, Self::make_filter(&hypermap), 0, 0);
 
         let mut new_state = Self {
-            kimap: kimap.clone(),
-            names: HashMap::from([(String::new(), kimap::KIMAP_ROOT_HASH.to_string())]),
+            hypermap: hypermap.clone(),
+            names: HashMap::from([(String::new(), hypermap::HYPERMAP_ROOT_HASH.to_string())]),
             index: BTreeMap::from([(
-                kimap::KIMAP_ROOT_HASH.to_string(),
+                hypermap::HYPERMAP_ROOT_HASH.to_string(),
                 Node {
                     parent_path: String::new(),
                     name: String::new(),
@@ -85,7 +85,7 @@ impl kinode_app_framework::State for State {
         };
 
         loop {
-            match kimap.provider.get_logs(&Self::make_filter(&kimap)) {
+            match hypermap.provider.get_logs(&Self::make_filter(&hypermap)) {
                 Ok(logs) => {
                     for log in logs {
                         if let Err(e) = new_state.handle_log(&log) {
@@ -107,22 +107,22 @@ impl kinode_app_framework::State for State {
 }
 
 impl State {
-    pub fn make_filter(kimap: &kimap::Kimap) -> eth::Filter {
+    pub fn make_filter(hypermap: &hypermap::Hypermap) -> eth::Filter {
         eth::Filter::new()
-            .address(*kimap.address())
-            .from_block(kimap::KIMAP_FIRST_BLOCK)
+            .address(*hypermap.address())
+            .from_block(hypermap::HYPERMAP_FIRST_BLOCK)
             .to_block(eth::BlockNumberOrTag::Latest)
             .events(vec![
-                kimap::contract::Mint::SIGNATURE,
-                kimap::contract::Note::SIGNATURE,
-                kimap::contract::Fact::SIGNATURE,
+                hypermap::contract::Mint::SIGNATURE,
+                hypermap::contract::Note::SIGNATURE,
+                hypermap::contract::Fact::SIGNATURE,
             ])
     }
 
     pub fn handle_log(&mut self, log: &eth::Log) -> anyhow::Result<()> {
         match log.topics()[0] {
-            kimap::contract::Mint::SIGNATURE_HASH => {
-                let decoded = kimap::contract::Mint::decode_log_data(log.data(), true).unwrap();
+            hypermap::contract::Mint::SIGNATURE_HASH => {
+                let decoded = hypermap::contract::Mint::decode_log_data(log.data(), true).unwrap();
 
                 let parent_hash = decoded.parenthash.to_string();
                 let child_hash = decoded.childhash.to_string();
@@ -130,16 +130,16 @@ impl State {
 
                 self.add_mint(&parent_hash, child_hash, label)?;
             }
-            kimap::contract::Note::SIGNATURE_HASH => {
-                let decoded = kimap::contract::Note::decode_log_data(log.data(), true).unwrap();
+            hypermap::contract::Note::SIGNATURE_HASH => {
+                let decoded = hypermap::contract::Note::decode_log_data(log.data(), true).unwrap();
 
                 let parent_hash = decoded.parenthash.to_string();
                 let note_label = String::from_utf8(decoded.label.to_vec())?;
 
                 self.add_note(&parent_hash, note_label, decoded.data)?;
             }
-            kimap::contract::Fact::SIGNATURE_HASH => {
-                let decoded = kimap::contract::Fact::decode_log_data(log.data(), true).unwrap();
+            hypermap::contract::Fact::SIGNATURE_HASH => {
+                let decoded = hypermap::contract::Fact::decode_log_data(log.data(), true).unwrap();
 
                 let parent_hash = decoded.parenthash.to_string();
                 let fact_label = String::from_utf8(decoded.label.to_vec())?;
@@ -163,7 +163,7 @@ impl State {
             .get_mut(parent_hash)
             .ok_or(anyhow::anyhow!("parent for child {child_hash} not found!"))?;
 
-        let parent_path: String = if parent_hash == kimap::KIMAP_ROOT_HASH {
+        let parent_path: String = if parent_hash == hypermap::HYPERMAP_ROOT_HASH {
             String::new()
         } else if parent_node.parent_path.is_empty() {
             format!(".{}", parent_node.name)
@@ -317,7 +317,7 @@ fn http_handler(state: &mut State, call: HttpApi) -> (http::server::HttpResponse
             )
         }
         HttpApi::GetTba(name) => {
-            let Ok((tba, owner, data)) = state.kimap.get(&name) else {
+            let Ok((tba, owner, data)) = state.hypermap.get(&name) else {
                 return (
                     http::server::HttpResponse::new(http::StatusCode::NOT_FOUND),
                     vec![],

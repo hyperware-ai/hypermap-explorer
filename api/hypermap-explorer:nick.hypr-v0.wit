@@ -1,4 +1,4 @@
-interface kimap-explorer {
+interface hypermap-explorer {
     type namehash = string;
     type name = string;
 
@@ -12,7 +12,7 @@ interface kimap-explorer {
     }
 }
 
-world kimap-explorer-doria-dot-kino-v1 {
-    import kimap-explorer;
+world hypermap-explorer-nick-dot-hypr-v0 {
+    import hypermap-explorer;
     include process-v1;
 }

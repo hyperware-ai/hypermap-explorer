@@ -1,23 +1,23 @@
 {
-    "name": "kimap-explorer",
-    "description": "A simple browsing tool for the Kimap namespace",
+    "name": "Hypermap Explorer",
+    "description": "A simple browsing tool for the Hypermap namespace",
     "image": "",
     "properties": {
-        "package_name": "kimap-explorer",
+        "package_name": "hypermap-explorer",
         "current_version": "1.0.0",
-        "publisher": "doria.kino",
+        "publisher": "nick.hypr",
         "mirrors": [
-            "doria.kino"
+            "nick.hypr",
+            "nick1udwig.os",
+            "diligence.os",
+            "yael-solutions.os"
         ],
         "code_hashes": {
-            "0.1.0": "d9284fd116811aa7f07a611014ef2e64737fc7c50d61a0454723ea8a4548bb56",
-            "0.2.0": "843750a6d560ffdc1fdfe691c3e6c844a3cbef1a5e58900b1824637fa7f573ac",
-            "0.3.0": "2423bd3e80c0fbc8f691de50e9d82c897096ad751cc6c80051d49df4ba137c69",
-            "1.0.0": "33aa634b4757e079b024ed7b51bea74705835f54f3b63e9e2d220925310a47a6"
+            "1.0.0": ""
         },
         "wit_version": 1,
         "dependencies": []
     },
-    "external_url": "",
+    "external_url": "https://github.com/nick1udwig/hypermap-explorer",
     "animation_url": ""
 }
