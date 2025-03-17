@@ -39,7 +39,7 @@ const InfoContainer: React.FC<InfoContainerProps> = ({ name, refetchNode }) => {
                 alert(error.message);
             },
             onSettled: () => {
-                // arbitrary temporary sleep for tx to index in kimap-explorer app
+                // arbitrary temporary sleep for tx to index in hypermap-explorer app
                 // can also listen to events on the frontend here, but tbh I'd rather put tx building completely to the backend
                 //
                 setTimeout(() => {

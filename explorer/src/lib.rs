@@ -14,7 +14,7 @@ wit_bindgen::generate!({
 req!((Explorer, ExplorerRequest), (Eth, eth::EthSubResult));
 
 app!(
-    "Kimap Explorer",
+    "Hypermap Explorer",
     None,
     None,
     http_handler,
@@ -65,7 +65,6 @@ impl hyperware_app_framework::State for State {
     /// generate a new state and subscribe to the hypermap and catch up on logs from genesis
     fn new() -> Self {
         let hypermap = hypermap::Hypermap::default(60);
-
         hypermap
             .provider
             .subscribe_loop(1, Self::make_filter(&hypermap), 0, 0);
@@ -108,6 +107,7 @@ impl hyperware_app_framework::State for State {
 
 impl State {
     pub fn make_filter(hypermap: &hypermap::Hypermap) -> eth::Filter {
+        println!("hypermap.address {}", &hypermap.address().to_string());
         eth::Filter::new()
             .address(*hypermap.address())
             .from_block(hypermap::HYPERMAP_FIRST_BLOCK)
