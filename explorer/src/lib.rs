@@ -1,6 +1,6 @@
 use alloy_sol_types::SolEvent;
 use hyperware::process::hypermap_explorer::{Name, Namehash, Request as ExplorerRequest};
-use hyperware_app_framework::{app, eth, http, hypermap, println, req, Message};
+use hyperware_app_framework::{app, eth, http, hypermap, println, print_to_terminal, req, Message};
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
@@ -107,7 +107,7 @@ impl hyperware_app_framework::State for State {
 
 impl State {
     pub fn make_filter(hypermap: &hypermap::Hypermap) -> eth::Filter {
-        println!("hypermap.address {}", &hypermap.address().to_string());
+        print_to_terminal(2, &format!("hypermap.address {}", &hypermap.address().to_string()));
         eth::Filter::new()
             .address(*hypermap.address())
             .from_block(hypermap::HYPERMAP_FIRST_BLOCK)
