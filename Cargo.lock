@@ -1519,7 +1519,7 @@ dependencies = [
 [[package]]
 name = "hyperware-app-framework"
 version = "0.1.0"
-source = "git+https://github.com/hyperware-ai/app-framework.git?rev=c74396f#c74396f29b50a24c615e9d8898c37048578b56c6"
+source = "git+https://github.com/hyperware-ai/app-framework.git?rev=ca955bc#ca955bc4d41d8ec7964105f7dbd8659e02db44bf"
 dependencies = [
  "anyhow",
  "hyperware_process_lib",
