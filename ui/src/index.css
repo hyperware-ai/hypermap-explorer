@@ -34,7 +34,7 @@ form input {
     color: light-dark(#073642, #1cc6f1);
 }
 
-/* KimapExplorer styles */
+/* HypermapExplorer styles */
 .explorer-container {
     display: grid;
     grid-template-rows: auto 1fr;

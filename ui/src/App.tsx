@@ -1,14 +1,14 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import KimapExplorer from './components/KimapExplorer';
+import HypermapExplorer from './components/HypermapExplorer';
 
 function App() {
   return (
     <div className="app-container">
       <header className="app-header">
-        <h1 className="app-title">Kimap Explorer</h1>
+        <h1 className="app-title">Hypermap Explorer</h1>
         <ConnectButton />
       </header>
-      <KimapExplorer />
+      <HypermapExplorer />
     </div>
   );
 }

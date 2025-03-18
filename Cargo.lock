@@ -1127,6 +1127,7 @@ dependencies = [
  "alloy-sol-types",
  "anyhow",
  "hyperware-app-framework",
+ "hyperware_process_lib",
  "serde",
  "serde_json",
  "wit-bindgen",
@@ -1518,7 +1519,7 @@ dependencies = [
 [[package]]
 name = "hyperware-app-framework"
 version = "0.1.0"
-source = "git+https://github.com/hyperware-ai/app-framework.git?rev=55d9a98#55d9a98582d384d17428447e7fbea297c97d99c7"
+source = "git+https://github.com/hyperware-ai/app-framework.git?rev=c74396f#c74396f29b50a24c615e9d8898c37048578b56c6"
 dependencies = [
  "anyhow",
  "hyperware_process_lib",
@@ -1530,9 +1531,9 @@ dependencies = [
 
 [[package]]
 name = "hyperware_process_lib"
-version = "1.0.3"
+version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "003b605a36ca638d3c8501e19ab33237abf6a7cf0e1547cfc6db2520dd58ef02"
+checksum = "572247e1810eccc6197799ea4d9944751a62251d2fb6afa17ca88e16b30c22b9"
 dependencies = [
  "alloy",
  "alloy-primitives",

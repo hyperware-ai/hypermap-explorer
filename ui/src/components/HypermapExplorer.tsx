@@ -3,7 +3,7 @@ import TreeContainer from './TreeContainer';
 import { fetchNode } from '../helpers';
 import { NodeElement, Node } from './NodeElement';
 
-const KimapExplorer: React.FC = () => {
+const HypermapExplorer: React.FC = () => {
     const [rootNode, setRootNode] = useState(null);
     const [searchResult, setSearchResult] = useState<Node | null>(null);
     const [searchError, setSearchError] = useState<string | null>(null);
@@ -65,4 +65,4 @@ const KimapExplorer: React.FC = () => {
     );
 };
 
-export default KimapExplorer;
+export default HypermapExplorer;

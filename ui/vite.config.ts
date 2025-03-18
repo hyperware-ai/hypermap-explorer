@@ -3,7 +3,7 @@ import { defineConfig } from 'vite'
 
 
 /*
-If you are developing a UI outside of a Kinode project,
+If you are developing a UI outside of a Hyperware project,
 comment out the following 2 lines:
 */
 import manifest from '../pkg/manifest.json'
