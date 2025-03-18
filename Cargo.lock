@@ -1519,7 +1519,7 @@ dependencies = [
 [[package]]
 name = "hyperware-app-framework"
 version = "0.1.0"
-source = "git+https://github.com/hyperware-ai/app-framework.git?rev=c74396f#c74396f29b50a24c615e9d8898c37048578b56c6"
+source = "git+https://github.com/hyperware-ai/app-framework.git?rev=2c4c8cf#2c4c8cf1d0e51f50fd2fbd4ee50e97fd2115e17e"
 dependencies = [
  "anyhow",
  "hyperware_process_lib",
@@ -1531,9 +1531,9 @@ dependencies = [
 
 [[package]]
 name = "hyperware_process_lib"
-version = "1.0.4"
+version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "572247e1810eccc6197799ea4d9944751a62251d2fb6afa17ca88e16b30c22b9"
+checksum = "fd85e48b5f017132d52df416578fe6816b51d166b70ffd8718dbe29ae979d98b"
 dependencies = [
  "alloy",
  "alloy-primitives",

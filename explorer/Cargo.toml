@@ -6,8 +6,8 @@ edition = "2021"
 [dependencies]
 alloy-sol-types = "0.8.15"
 anyhow = "1.0"
-hyperware-app-framework = { git = "https://github.com/hyperware-ai/app-framework.git", rev = "c74396f" }
-hyperware_process_lib = "1.0.4"
+hyperware-app-framework = { git = "https://github.com/hyperware-ai/app-framework.git", rev = "2c4c8cf" }
+hyperware_process_lib = "1.0.5"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 wit-bindgen = "0.36.0"

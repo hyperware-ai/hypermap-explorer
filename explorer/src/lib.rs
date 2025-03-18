@@ -1,6 +1,8 @@
 use alloy_sol_types::SolEvent;
 use hyperware::process::hypermap_explorer::{Name, Namehash, Request as ExplorerRequest};
-use hyperware_app_framework::{app, eth, http, hypermap, println, print_to_terminal, req, Message};
+use hyperware_app_framework::{
+    app, eth, get_typed_state, http, hypermap, print_to_terminal, println, req, set_state, Message,
+};
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
@@ -59,6 +61,8 @@ struct State {
     pub names: HashMap<Name, Namehash>,
     /// map from a namehash to its information
     pub index: BTreeMap<String, Node>,
+    /// most recently-seen block
+    pub most_recent_block: u64,
 }
 
 impl hyperware_app_framework::State for State {
@@ -67,7 +71,7 @@ impl hyperware_app_framework::State for State {
         let hypermap = hypermap::Hypermap::default(60);
         hypermap
             .provider
-            .subscribe_loop(1, Self::make_filter(&hypermap), 0, 0);
+            .subscribe_loop(1, Self::make_filter(&hypermap, None), 0, 0);
 
         let mut new_state = Self {
             hypermap: hypermap.clone(),
@@ -81,36 +85,36 @@ impl hyperware_app_framework::State for State {
                     data_keys: BTreeMap::new(),
                 },
             )]),
+            most_recent_block: hypermap::HYPERMAP_FIRST_BLOCK,
         };
 
-        loop {
-            match hypermap.provider.get_logs(&Self::make_filter(&hypermap)) {
-                Ok(logs) => {
-                    for log in logs {
-                        if let Err(e) = new_state.handle_log(&log) {
-                            println!("log-handling error! {e:?}");
-                        }
-                    }
-                    break;
-                }
-                Err(e) => {
-                    println!("got eth error while fetching logs: {e:?}, trying again in 5s...");
-                    std::thread::sleep(std::time::Duration::from_secs(5));
-                    continue;
-                }
-            }
-        }
+        new_state.get_logs();
 
         new_state
+    }
+
+    fn load() -> Self {
+        let state = match get_typed_state(|bytes| serde_json::from_slice::<Self>(bytes)) {
+            None => Self::new(),
+            Some(mut old_state) => {
+                old_state.get_logs();
+                old_state
+            }
+        };
+        set_state(&serde_json::to_vec(&state).expect("failed to serialize state to bytes"));
+        state
     }
 }
 
 impl State {
-    pub fn make_filter(hypermap: &hypermap::Hypermap) -> eth::Filter {
-        print_to_terminal(2, &format!("hypermap.address {}", &hypermap.address().to_string()));
+    pub fn make_filter(hypermap: &hypermap::Hypermap, from_block: Option<u64>) -> eth::Filter {
+        print_to_terminal(
+            2,
+            &format!("hypermap.address {}", &hypermap.address().to_string()),
+        );
         eth::Filter::new()
             .address(*hypermap.address())
-            .from_block(hypermap::HYPERMAP_FIRST_BLOCK)
+            .from_block(from_block.unwrap_or_else(|| hypermap::HYPERMAP_FIRST_BLOCK))
             .to_block(eth::BlockNumberOrTag::Latest)
             .events(vec![
                 hypermap::contract::Mint::SIGNATURE,
@@ -119,7 +123,7 @@ impl State {
             ])
     }
 
-    pub fn handle_log(&mut self, log: &eth::Log) -> anyhow::Result<()> {
+    pub fn handle_log(&mut self, log: &eth::Log, save_state: bool) -> anyhow::Result<()> {
         match log.topics()[0] {
             hypermap::contract::Mint::SIGNATURE_HASH => {
                 let decoded = hypermap::contract::Mint::decode_log_data(log.data(), true).unwrap();
@@ -149,7 +153,42 @@ impl State {
             _ => {}
         }
 
+        if let Some(block_number) = log.block_number {
+            self.most_recent_block = block_number;
+        }
+
+        if save_state {
+            set_state(&serde_json::to_vec(self)?);
+        }
+
         Ok(())
+    }
+
+    pub fn get_logs(&mut self) {
+        loop {
+            match self
+                .hypermap
+                .provider
+                .get_logs(&Self::make_filter(&self.hypermap, None))
+            {
+                Ok(logs) => {
+                    for log in logs {
+                        if let Err(e) = self.handle_log(&log, false) {
+                            println!("log-handling error! {e:?}");
+                        }
+                    }
+                    if let Ok(serialized_state) = serde_json::to_vec(self) {
+                        set_state(&serialized_state);
+                    }
+                    break;
+                }
+                Err(e) => {
+                    println!("got eth error while fetching logs: {e:?}, trying again in 5s...");
+                    std::thread::sleep(std::time::Duration::from_secs(5));
+                    continue;
+                }
+            }
+        }
     }
 
     pub fn add_mint(
@@ -366,7 +405,7 @@ fn local_request_handler(
             };
 
             if let eth::SubscriptionResult::Log(log) = sub_result {
-                match state.handle_log(&log) {
+                match state.handle_log(&log, true) {
                     Ok(()) => return,
                     Err(e) => println!("log-handling error! {e:?}"),
                 }
