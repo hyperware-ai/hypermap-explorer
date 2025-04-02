@@ -33,7 +33,6 @@ export function mintFunction(our_address: `0x${string}`, nodename: string, imple
             our_address,
             encodePacked(["bytes"], [stringToHex(nodename)]),
             "0x", // empty initial calldata
-            "0x", // empty erc721 details
             implementation ?? HYPER_ACCOUNT_IMPL,
         ]
     })
