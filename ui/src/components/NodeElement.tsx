@@ -62,10 +62,10 @@ export const NodeElement: React.FC<NodeElementProps> = ({ name }) => {
                     <span className={`arrow ${expanded ? 'expanded' : ''}`}></span>
                 ) : <span className="arrow-hidden"></span>}
                 <span className="node-name">{node.name + node.parent_path}</span>
-                <span className="node-info">
+                <span className="node-info" style={{ display: 'flex', alignItems: 'center' }}>
                     ({node.child_names.length} {node.child_names.length === 1 ? 'child' : 'children'}, {Object.keys(node.data_keys).length} {Object.keys(node.data_keys).length === 1 ? 'data-key' : 'data-keys'})
+                    <button className="info-button" onClick={(e) => { e.stopPropagation(); toggleInfo(); }}>ℹ️</button>
                 </span>
-                <button className="info-button" onClick={(e) => { e.stopPropagation(); toggleInfo(); }}>ℹ️</button>
             </div>
             {infoVisible && <InfoContainer name={name} refetchNode={fetchNodeData} />}
             {expanded && hasChildren && (

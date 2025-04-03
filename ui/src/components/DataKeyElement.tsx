@@ -33,8 +33,10 @@ export const DataKeyElement: React.FC<DataKeyElementProps> = ({ dataKey, dataVal
 
     return (
         <div className="data-key">
-            {dataKey}
-            <button className="info-button" onClick={toggleValue}>📄</button>
+            <span style={{ display: 'flex', alignItems: 'center' }}>
+                {dataKey}
+                <button className="info-button" onClick={toggleValue}>📄</button>
+            </span>
             {valueVisible && (
                 <div className="info-container">
                     {dataValue.Note && (
