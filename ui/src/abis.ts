@@ -14,7 +14,7 @@ export const multicallAbi = parseAbi([
 ]);
 
 export const hypermapAbi = parseAbi([
-    "function mint(address, bytes calldata, bytes calldata, bytes calldata, address) external returns (address tba)",
+    "function mint(address, bytes calldata, bytes calldata, address) external returns (address tba)",
     "function fact(bytes calldata,bytes calldata) external returns (bytes32)",
     "function note(bytes calldata,bytes calldata) external returns (bytes32)",
     "function get(bytes32 node) external view returns (address tokenBoundAccount, address tokenOwner, bytes memory note)",
