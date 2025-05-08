@@ -117,6 +117,7 @@ form input {
 
 .content {
     display: grid;
+    grid-template-columns: 1fr;
     gap: 0.25rem;
     margin-left: 1rem;
     border-left: 1px solid light-dark(#93a1a1, #a7e2f1);
@@ -134,10 +135,21 @@ form input {
 
 .data-key {
     display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
+    grid-template-columns: 1fr;  /* Changed from 1fr auto to stack vertically */
+    align-items: start;
     padding: 0.25rem;
     background: light-dark(#eee8d5, #073642);
+}
+
+/* Note History styles */
+.note-history {
+    margin-left: 1.5rem;  /* Add indentation */
+    margin-top: 0.25rem;  /* Add space above */
+    padding-top: 0.25rem;
+    font-size: 0.9em;
+    color: light-dark(#657b83, #93a1a1);
+    border-left: 1px dashed light-dark(#93a1a1, #586e75);
+    padding-left: 0.5rem;
 }
 
 /* InfoContainer styles */
@@ -146,12 +158,22 @@ form input {
     gap: 0.5rem;
     padding: 0.5rem;
     max-width: 600px;
-    margin-left: 30px;
+    margin-left: 2rem;
+    border-left: 1px solid light-dark(#93a1a1, #a7e2f1);
+    padding-left: 0.5rem;
+    background: light-dark(#fdf6e3, #002b36);
 }
 
 .note-input-container {
     display: grid;
-    gap: 1rem;
+    gap: 0.5rem;
+}
+
+.note-input-subcontainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 0.5rem;
+    align-items: center;
 }
 
 .note-input {
@@ -200,4 +222,10 @@ form input {
 
 .pagination {
     padding: 0.25rem;
+}
+
+.owner-tag {
+    margin-left: 0.5rem;
+    color: light-dark(#268bd2, #1cc6f1);
+    font-style: italic;
 }

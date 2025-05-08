@@ -98,6 +98,10 @@ impl hyperware_app_framework::State for State {
             None => Self::new(),
             Some(mut old_state) => {
                 old_state.get_logs();
+                let hypermap = hypermap::Hypermap::default(60);
+                hypermap
+                    .provider
+                    .subscribe_loop(1, Self::make_filter(&hypermap, None), 0, 0);
                 old_state
             }
         };
@@ -166,11 +170,10 @@ impl State {
 
     pub fn get_logs(&mut self) {
         loop {
-            match self
-                .hypermap
-                .provider
-                .get_logs(&Self::make_filter(&self.hypermap, None))
-            {
+            match self.hypermap.provider.get_logs(&Self::make_filter(
+                &self.hypermap,
+                Some(self.most_recent_block),
+            )) {
                 Ok(logs) => {
                     for log in logs {
                         if let Err(e) = self.handle_log(&log, false) {

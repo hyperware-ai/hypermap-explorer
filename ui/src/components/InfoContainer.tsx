@@ -165,8 +165,8 @@ const InfoContainer: React.FC<InfoContainerProps> = ({ name, refetchNode }) => {
 
     return (
         <div className="info-container">
-            <div>Owner: {info.owner}{info.owner.toLowerCase() === address?.toLowerCase() && <span className="owner-tag">(you)</span>}</div>
-            <div>TBA: {info.tba}</div>
+            <div>Owner: <a href={`https://basescan.org/address/${info.owner}`} target="_blank" rel="noopener noreferrer">{info.owner}</a>{info.owner.toLowerCase() === address?.toLowerCase() && <span className="owner-tag">(you)</span>}</div>
+            <div>TBA: <a href={`https://basescan.org/address/${info.tba}`}>{info.tba}</a></div>
             {info.data_hex && <div>Data Hex: {info.data_hex}</div>}
             {info.owner.toLowerCase() === address?.toLowerCase() && (
                 <div className="note-input-container">
