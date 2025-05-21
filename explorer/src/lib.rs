@@ -4,10 +4,10 @@ use hyperware_app_framework::{
     app, eth, get_typed_state, http, hypermap, print_to_terminal, println, req, set_state, Message,
 };
 use serde::{Deserialize, Serialize};
-use std::collections::{BTreeMap, BTreeSet, HashMap};
+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 
 wit_bindgen::generate!({
-    path: "target/wit",
+    path: "../target/wit",
     world: "hypermap-explorer-nick-dot-hypr-v0",
     generate_unused_types: true,
     additional_derives: [serde::Deserialize, serde::Serialize, hyperware_app_framework::SerdeJsonInto],
@@ -71,7 +71,7 @@ impl hyperware_app_framework::State for State {
         let hypermap = hypermap::Hypermap::default(60);
         hypermap
             .provider
-            .subscribe_loop(1, Self::make_filter(&hypermap, None), 0, 0);
+            .subscribe_loop(1, make_filter(&hypermap, None), 0, 0);
 
         let mut new_state = Self {
             hypermap: hypermap.clone(),
@@ -101,7 +101,7 @@ impl hyperware_app_framework::State for State {
                 let hypermap = hypermap::Hypermap::default(60);
                 hypermap
                     .provider
-                    .subscribe_loop(1, Self::make_filter(&hypermap, None), 0, 0);
+                    .subscribe_loop(1, make_filter(&hypermap, None), 0, 0);
                 old_state
             }
         };
@@ -111,22 +111,6 @@ impl hyperware_app_framework::State for State {
 }
 
 impl State {
-    pub fn make_filter(hypermap: &hypermap::Hypermap, from_block: Option<u64>) -> eth::Filter {
-        print_to_terminal(
-            2,
-            &format!("hypermap.address {}", &hypermap.address().to_string()),
-        );
-        eth::Filter::new()
-            .address(*hypermap.address())
-            .from_block(from_block.unwrap_or_else(|| hypermap::HYPERMAP_FIRST_BLOCK))
-            .to_block(eth::BlockNumberOrTag::Latest)
-            .events(vec![
-                hypermap::contract::Mint::SIGNATURE,
-                hypermap::contract::Note::SIGNATURE,
-                hypermap::contract::Fact::SIGNATURE,
-            ])
-    }
-
     pub fn handle_log(&mut self, log: &eth::Log, save_state: bool) -> anyhow::Result<()> {
         match log.topics()[0] {
             hypermap::contract::Mint::SIGNATURE_HASH => {
@@ -169,11 +153,33 @@ impl State {
     }
 
     pub fn get_logs(&mut self) {
+        let filter = make_filter(&self.hypermap, Some(self.most_recent_block));
+        let nodes: HashSet<String> = ["diligence.os".to_string()].into_iter().collect();
+        match self
+            .hypermap
+            .bootstrap(Some(self.most_recent_block), vec![filter], nodes, None)
+        {
+            Err(e) => println!("bootstrap from cache failed: {e:?}"),
+            Ok(mut logs) => {
+                assert_eq!(logs.len(), 1);
+                let logs = logs.pop().unwrap();
+                for log in logs {
+                    if let Err(e) = self.handle_log(&log, false) {
+                        println!("log-handling error! {e:?}");
+                    }
+                }
+                if let Ok(serialized_state) = serde_json::to_vec(self) {
+                    set_state(&serialized_state);
+                }
+            }
+        }
+
         loop {
-            match self.hypermap.provider.get_logs(&Self::make_filter(
-                &self.hypermap,
-                Some(self.most_recent_block),
-            )) {
+            match self
+                .hypermap
+                .provider
+                .get_logs(&make_filter(&self.hypermap, Some(self.most_recent_block)))
+            {
                 Ok(logs) => {
                     for log in logs {
                         if let Err(e) = self.handle_log(&log, false) {
@@ -336,6 +342,22 @@ impl State {
             }
         )
     }
+}
+
+fn make_filter(hypermap: &hypermap::Hypermap, from_block: Option<u64>) -> eth::Filter {
+    print_to_terminal(
+        2,
+        &format!("hypermap.address {}", &hypermap.address().to_string()),
+    );
+    eth::Filter::new()
+        .address(*hypermap.address())
+        .from_block(from_block.unwrap_or_else(|| hypermap::HYPERMAP_FIRST_BLOCK))
+        .to_block(eth::BlockNumberOrTag::Latest)
+        .events(vec![
+            hypermap::contract::Mint::SIGNATURE,
+            hypermap::contract::Note::SIGNATURE,
+            hypermap::contract::Fact::SIGNATURE,
+        ])
 }
 
 fn http_handler(state: &mut State, call: HttpApi) -> (http::server::HttpResponse, Vec<u8>) {

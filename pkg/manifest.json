@@ -3,16 +3,18 @@
         "process_name": "explorer",
         "process_wasm_path": "/explorer.wasm",
         "on_exit": "Restart",
-        "request_networking": false,
+        "request_networking": true,
         "request_capabilities": [
+            "eth:distro:sys",
             "homepage:homepage:sys",
             "http-server:distro:sys",
-            "eth:distro:sys",
+            "sign:sign:sys",
             "vfs:distro:sys"
         ],
         "grant_capabilities": [
-            "http-server:distro:sys",
             "eth:distro:sys",
+            "http-server:distro:sys",
+            "sign:sign:sys",
             "terminal:terminal:sys"
         ],
         "public": false
