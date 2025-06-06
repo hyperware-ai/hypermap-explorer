@@ -4,7 +4,7 @@ use hyperware_app_framework::{
     app, eth, get_typed_state, http, hypermap, print_to_terminal, println, req, set_state, Message,
 };
 use serde::{Deserialize, Serialize};
-use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 
 wit_bindgen::generate!({
     path: "../target/wit",
@@ -142,7 +142,9 @@ impl State {
         }
 
         if let Some(block_number) = log.block_number {
-            self.most_recent_block = block_number;
+            if block_number > self.most_recent_block {
+                self.most_recent_block = block_number;
+            }
         }
 
         if save_state {
@@ -154,13 +156,14 @@ impl State {
 
     pub fn get_logs(&mut self) {
         let filter = make_filter(&self.hypermap, Some(self.most_recent_block));
-        let nodes: HashSet<String> = ["diligence.os".to_string()].into_iter().collect();
-        match self
-            .hypermap
-            .bootstrap(Some(self.most_recent_block), vec![filter], nodes, None)
-        {
+        match self.hypermap.bootstrap(
+            Some(self.most_recent_block),
+            vec![filter],
+            Some((5, None)),
+            None,
+        ) {
             Err(e) => println!("bootstrap from cache failed: {e:?}"),
-            Ok(mut logs) => {
+            Ok((block, mut logs)) => {
                 assert_eq!(logs.len(), 1);
                 let logs = logs.pop().unwrap();
                 for log in logs {
@@ -168,6 +171,11 @@ impl State {
                         println!("log-handling error! {e:?}");
                     }
                 }
+
+                if block > self.most_recent_block {
+                    self.most_recent_block = block;
+                }
+
                 if let Ok(serialized_state) = serde_json::to_vec(self) {
                     set_state(&serialized_state);
                 }
