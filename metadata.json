@@ -4,7 +4,7 @@
     "image": "",
     "properties": {
         "package_name": "hypermap-explorer",
-        "current_version": "1.0.4",
+        "current_version": "1.0.5",
         "publisher": "nick.hypr",
         "mirrors": [
             "nick.hypr",
@@ -13,6 +13,7 @@
             "yael-solutions.os"
         ],
         "code_hashes": {
+            "1.0.5": "00eef6e20182f1ad4a352fdf4aa7a62aed4c4c01acad7fd1e1ccf84306b91417",
             "1.0.4": "5b516eddf2ff25cbc9eed5d213bda247a5cc70c22621007d902b61ac77e09d9a",
             "1.0.3": "353fc7b1c380120f0aaeada2d42abeff2d3c0f470b5ed6ae40aa9b2a9fc09a80",
             "1.0.2": "3d87ad1f8c1a7b3f7173df94c0da5091743fa5417db8403cd21e8738d101167d",
@@ -20,7 +21,11 @@
             "1.0.0": "0d775ba9b9d1be662e90b00539a7a226867da592820281c3ca0318ddc871ea8f"
         },
         "wit_version": 1,
-        "dependencies": []
+        "dependencies": [],
+        "screenshots": [
+            "https://raw.githubusercontent.com/hyperware-ai/hypermap-explorer/refs/heads/master/assets/mobile-view.png",
+            "https://raw.githubusercontent.com/hyperware-ai/hypermap-explorer/refs/heads/master/assets/desktop-nested-view.png"
+        ]
     },
     "external_url": "https://github.com/hyperware-ai/hypermap-explorer",
     "animation_url": ""

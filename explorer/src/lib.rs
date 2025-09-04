@@ -24,6 +24,8 @@ app!(
     remote_request_handler
 );
 
+const SUBSCRIPTION_NUMBER: u64 = 1;
+
 #[derive(Debug, Deserialize, Serialize)]
 enum HttpApi {
     /// fetch node info indexed within this app
@@ -71,7 +73,7 @@ impl hyperware_app_framework::State for State {
         let hypermap = hypermap::Hypermap::default(60);
         hypermap
             .provider
-            .subscribe_loop(1, make_filter(&hypermap, None), 0, 0);
+            .subscribe_loop(SUBSCRIPTION_NUMBER, make_filter(&hypermap, None), 0, 0);
 
         let mut new_state = Self {
             hypermap: hypermap.clone(),
@@ -99,9 +101,12 @@ impl hyperware_app_framework::State for State {
             Some(mut old_state) => {
                 old_state.get_logs();
                 let hypermap = hypermap::Hypermap::default(60);
-                hypermap
-                    .provider
-                    .subscribe_loop(1, make_filter(&hypermap, None), 0, 0);
+                hypermap.provider.subscribe_loop(
+                    SUBSCRIPTION_NUMBER,
+                    make_filter(&hypermap, None),
+                    0,
+                    0,
+                );
                 old_state
             }
         };
@@ -429,6 +434,16 @@ fn local_request_handler(
         },
         Req::Eth(eth_result) => {
             let Ok(eth::EthSub { result, .. }) = eth_result else {
+                // unsubscribe to make sure we have cleaned up after ourselves;
+                //  drop Result since we don't care if no subscription exists,
+                //  just being diligent in case it does!
+                let _ = state.hypermap.provider.unsubscribe(SUBSCRIPTION_NUMBER);
+                state.hypermap.provider.subscribe_loop(
+                    SUBSCRIPTION_NUMBER,
+                    make_filter(&state.hypermap, None),
+                    0,
+                    0,
+                );
                 return;
             };
 
