@@ -23,8 +23,8 @@
         "wit_version": 1,
         "dependencies": [],
         "screenshots": [
-            "https://raw.githubusercontent.com/hyperware-ai/hypermap-explorer/refs/heads/master/assets/mobile-view.png",
-            "https://raw.githubusercontent.com/hyperware-ai/hypermap-explorer/refs/heads/master/assets/desktop-nested-view.png"
+            "https://raw.githubusercontent.com/hyperware-ai/hypermap-explorer/refs/heads/main/assets/mobile-view.png",
+            "https://raw.githubusercontent.com/hyperware-ai/hypermap-explorer/refs/heads/main/assets/desktop-nested-view.png"
         ]
     },
     "external_url": "https://github.com/hyperware-ai/hypermap-explorer",
