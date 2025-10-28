@@ -4,7 +4,7 @@
     "image": "",
     "properties": {
         "package_name": "hypermap-explorer",
-        "current_version": "1.0.5",
+        "current_version": "1.0.6",
         "publisher": "nick.hypr",
         "mirrors": [
             "nick.hypr",
@@ -13,6 +13,7 @@
             "yael-solutions.os"
         ],
         "code_hashes": {
+            "1.0.6": "3b4a2b78e61d024b8b4a2cd86e02208fdca8fcd106ec94eaf42ec28dabf42157",
             "1.0.5": "00eef6e20182f1ad4a352fdf4aa7a62aed4c4c01acad7fd1e1ccf84306b91417",
             "1.0.4": "5b516eddf2ff25cbc9eed5d213bda247a5cc70c22621007d902b61ac77e09d9a",
             "1.0.3": "353fc7b1c380120f0aaeada2d42abeff2d3c0f470b5ed6ae40aa9b2a9fc09a80",
